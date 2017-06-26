@@ -13,26 +13,70 @@
 			font-weight: bold;
 			overflow: hidden;
 		}
+
+		.popup {
+			display: none;
+			/* Hidden by default */
+			position: absolute;
+			/* Stay in place */
+			z-index: 1;
+			/* Sit on top */
+			padding: 40px 40px 40px 40px;
+			/* Location of the box */
+			left: 20%;
+			top: 20%;
+			width: 40%;
+			/* Full width */
+			height: 60%;
+			/* Full height */
+			overflow: auto;
+			/* Enable scroll if needed */
+			background-color: rgb(0,0,0);
+			/* Fallback color */
+			background-color: rgba(100,100,100,0.5);;
+			/* Black w/ opacity */
+		}
+		/* The Close Button */
+		.close {
+       position: absolute;
+       padding: 0px 20px 0px 20px;
+			 color: #ffffff;
+			 float: right;
+			 font-size: 80px;
+			 font-weight: bold;
+       z-index: 10;
+		}
+		.close:hover,
+		.close:focus {
+			 color: black;
+			 text-decoration: none;
+			 cursor: pointer;
+		}
+     .fabricText{
+      position: absolute;
+      padding: 300px 200px 0px 80px;
+      font-size: 60px;
+      color:white;
+      text-align: center;
+    }
 	</style>
 </head>
-
 <body>
-	<script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+	<div id="dialog" class="popup"><p class="fabricText">Sontte Fabric</p></div>
+	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script src="three.min.js"></script>
 	<script src="stats.min.js"></script>
 	<script src="Projector.js"></script>
 	<script src="CanvasRenderer.js"></script>
 	<script src="tween.min.js"></script>
 	<script src="Detector.js"></script>
- <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 	<script>
 		var container, stats;
 		var camera, scene, renderer;
-		var geometry, group, fabrics;
-		var fabrics = [];
-    var intersection=null;
-		var mouseX = 0,
-			mouseY = 0;
+		var geometry, group;
+		var intersection = null;
+		var mouseX = 0, mouseY = 0;
 		var windowHalfX = window.innerWidth / 5;
 		var windowHalfY = window.innerHeight / 5;
 		var dirLight, hemiLight, spotLight, cloth, textureLoader, raycaster, mouse;
@@ -41,6 +85,7 @@
 		animate();
 
 		function init() {
+			$(".popup").hide();
 			container = document.createElement('div');
 			document.body.appendChild(container);
 			camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 8000);
@@ -50,13 +95,15 @@
 			scene.fog = new THREE.Fog(0xffffff, 1, 10000);
 			//fabric json
 			$.getJSON("texture.json", function(data) {
-				for (var i = 0; i < 39; i++) {
+				for (var i = 0; i < data.filename.length; i++) {
 					var textureLoader = new THREE.TextureLoader();
 					var geometry = new THREE.BoxGeometry(100, 100, 1);
 					var texture = textureLoader.load('image/' + data.filename[i]);
 					var material = new THREE.MeshBasicMaterial({
 						map: texture
 					});
+					//  var color = new THREE.Color('#ffffff');
+					//  var material = new THREE.MeshPhongMaterial({color:color.getHex(), bumpMap:texture});
 
 					// var faceMaterial = new THREE.MeshFaceMaterial(materials);
 					var mesh = new THREE.Mesh(geometry, material);
@@ -67,23 +114,22 @@
 					mesh.rotation.y = Math.random() * 2 * Math.PI;
 					mesh.matrixAutoUpdate = false;
 					mesh.updateMatrix();
+					mesh.name = data.filename[i];
 					group.add(mesh);
-					fabrics.push(mesh);
 				}
 				scene.add(group);
 			});
 
 			raycaster = new THREE.Raycaster();
 			mouse = new THREE.Vector2();
-
 			renderer = new THREE.WebGLRenderer();
 			renderer.setClearColor(0xffffff);
 			renderer.setPixelRatio(window.devicePixelRatio);
 			renderer.setSize(window.innerWidth, window.innerHeight);
 			// renderer.sortObjects = false;
 			container.appendChild(renderer.domElement);
-			//document.addEventListener('mousedown', onDocumentMouseDown, false);
-			document.addEventListener('mousemove', onDocumentMouseDown, false);
+			document.addEventListener('mousedown', onDocumentMouseDown, false);
+			document.addEventListener('mousemove', onDocumentMouseMove, false);
 			document.addEventListener('touchstart', onDocumentTouchStart, false);
 			window.addEventListener('resize', onWindowResize, false);
 
@@ -113,39 +159,60 @@
 			// 	cloth.material, map = texture;
 			// 	cloth.material.needsUpdate = true;
 			// });
-			function onWindowResize() {
-  			camera.aspect = window.innerWidth / window.innerHeight;
-  			camera.updateProjectionMatrix();
-  			renderer.setSize(window.innerWidth, window.innerHeight);
-  		}
+			var light = new THREE.PointLight(0xFFFFFF, 1.5);
+			light.position.set(1000, 0, 800);
+			scene.add(light);
 
-			function onDocumentTouchStart( event ) {
+			var light = new THREE.PointLight(0xFFFFFF, 1.5);
+			light.position.set(6000, 0, -800);
+			scene.add(light);
+
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+			}
+
+			function onDocumentTouchStart(event) {
 				event.preventDefault();
 				event.clientX = event.touches[0].clientX;
 				event.clientY = event.touches[0].clientY;
-				onDocumentMouseDown( event );
+				onDocumentMouseDown(event);
 			}
-
-  		function onDocumentMouseDown(event) {
-
-  			mouseX = (event.clientX - windowHalfX) * 2;
-  			mouseY = (event.clientY - windowHalfY) * 2;
+      function onDocumentMouseMove(event){
         event.preventDefault();
-  			mouse.x = +( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
-        mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
-  			raycaster.setFromCamera(mouse, camera);
-  			var intersections = raycaster.intersectObjects(group.children);
-        intersection = (intersections.length)>0 ? intersections[0]:null;
-  			if (intersection) {
-         for (var i=0; i<intersections.length; i++){
-         var intersection = intersections[i],
-         obj = intersection.object;
-          console.log('I am here');
-          obj.material.color.setRGB(1.0-i/intersections.length,0,0);
-         }
-  			}
-  		}
+				mouseX = (event.clientX - windowHalfX) * 1.2;
+				mouseY = (event.clientY - windowHalfY) * 1.2;
+      }
+			function onDocumentMouseDown(event) {
+				// mouseX = (event.clientX - windowHalfX) * 2;
+				// mouseY = (event.clientY - windowHalfY) * 2;
+				event.preventDefault();
+				mouse.x = +(event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+				mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+				raycaster.setFromCamera(mouse, camera);
+				var intersections = raycaster.intersectObjects(group.children);
+				intersection = (intersections.length) > 0 ? intersections[0] : null;
+				if (intersection) {
+					for (var i = 0; i < intersections.length; i++) {
+						var intersection = intersections[i],
+							obj = intersection.object;
+							var imgUrl = 'image/' + obj.name;
+							$(".text").empty();
+							$(".popup").append("<div class='text'><div class='imgDiv'><img id='fabricImg' width = 520px;><span class='close'>&times;</span></div></div>");
+							$('#fabricImg').attr('src',imgUrl);
+							var textureLoader = new THREE.TextureLoader();
+							$(".popup").show();
+							//obj.material.color.setRGB(1.0 - i / intersections.length, 0, 0);
+						console.log('I am here');
+						//alert("I am a fabric!"+ 'data.filename[i]');
+					}
+				}
+				$('.close').click(function(){
+					$('.popup').hide()});
+			}
 		}
+
 		//
 		function animate() {
 			requestAnimationFrame(animate);
@@ -154,11 +221,11 @@
 		}
 
 		function render() {
-      TWEEN.update();
+			TWEEN.update();
 			camera.position.x += (mouseX - camera.position.x) * .02;
 			camera.position.y += (-mouseY - camera.position.y) * .02;
 			camera.lookAt(scene.position);
-      var time = Date.now();
+			var time = Date.now();
 			scene.rotation.x = Math.sin(time * 0.0002) * 0.9;
 			scene.rotation.y = Math.sin(time * 0.0002) * 0.9;
 			scene.rotation.z = Math.sin(time * 0.0002) * 0.9;
