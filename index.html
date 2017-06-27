@@ -90,7 +90,7 @@
 		var mouseX = 0, mouseY = 0;
 		var windowHalfX = window.innerWidth / 5;
 		var windowHalfY = window.innerHeight / 5;
-		var dirLight, hemiLight, spotLight, cloth, textureLoader, raycaster, mouse;
+		var light, dirLight, hemiLight, spotLight, cloth, textureLoader, raycaster, mouse;
 
     document.addEventListener('mousemove',onDocumentMouseMove, false);
      $(document).ready(function(){
@@ -102,8 +102,8 @@
 			$(".popup").hide();
 			container = document.createElement('div');
 			document.body.appendChild(container);
-			camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
-			camera.position.z = 1200;
+			camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 10000);
+			camera.position.z =2000;
 
       controls = new THREE.TrackballControls(camera);
       controls.rotateSpeed = 0.3;
@@ -133,9 +133,9 @@
 
 					// var faceMaterial = new THREE.MeshFaceMaterial(materials);
 					var mesh = new THREE.Mesh(geometry, material);
-					mesh.position.x = Math.random() * 900 - 300;
-					mesh.position.y = Math.random() * 900 - 300;
-					mesh.position.z = Math.random() * 900 - 300;
+					mesh.position.x = Math.random() * 1200 - 400;
+					mesh.position.y = Math.random() * 1200 - 700;
+					mesh.position.z = Math.random() * 1000 - 100;
 					// mesh.rotation.x = Math.random() * 2 * Math.PI;
 					// mesh.rotation.y = Math.random() * 2 * Math.PI;
 					mesh.matrixAutoUpdate = false;
@@ -185,12 +185,7 @@
 			// 	cloth.material, map = texture;
 			// 	cloth.material.needsUpdate = true;
 			// });
-			var light = new THREE.PointLight(0xFFFFFF, 1.5);
-			light.position.set(1000, 0, 800);
-			scene.add(light);
-
-			var light = new THREE.PointLight(0xFFFFFF, 1.5);
-			light.position.set(6000, 0, -800);
+			light = new THREE.DirectionalLight(0xffffff);
 			scene.add(light);
 
 			function onWindowResize() {
@@ -208,8 +203,8 @@
 			}
 
 			function onDocumentMouseDown(event) {
-				mouseX = (event.clientX - windowHalfX) * 2;
-				mouseY = (event.clientY - windowHalfY) * 2;
+				mouseX = (event.clientX - windowHalfX);
+				mouseY = (event.clientY - windowHalfY);
 				// event.preventDefault();
 				mouse.x = +(event.clientX / renderer.domElement.clientWidth) * 2 - 1;
 				mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
@@ -222,7 +217,7 @@
 							obj = intersection.object;
 							var imgUrl = 'image/' + obj.name;
 							$(".text").empty();
-							$(".popup").append("<img class='fabricImg' width = 100%><span class='close'>&times;</span>");
+							$(".popup").append("<img class='fabricImg' width = 100%'><span class='close'>&times;</span>");
 							$('.fabricImg').attr('src',imgUrl);
 							var textureLoader = new THREE.TextureLoader();
 							$(".popup").show();
@@ -237,8 +232,8 @@
 		}
 
 		function onDocumentMouseMove(event){
- 		 mouseX = (event.clientX - windowHalfX) * 2;
- 		 mouseY = (event.clientY - windowHalfY) * 2;
+ 		 mouseX = (event.clientX - windowHalfX) ;
+ 		 mouseY = (event.clientY - windowHalfY) ;
  	 }
 		//
 		function animate() {
@@ -250,13 +245,13 @@
 
 		function render() {
 			TWEEN.update();
-			camera.position.x += (mouseX - camera.position.x) * .05;
-			camera.position.y += (-mouseY - camera.position.y) * .05;
+			camera.position.x += (mouseX - camera.position.x) * .09;
+			camera.position.y += (-mouseY - camera.position.y) * .09;
 			camera.lookAt(scene.position);
 			var time = Date.now();
-			scene.rotation.x = Math.sin(time * 0.0002) * 0.3;
-			scene.rotation.y = Math.sin(time * 0.0002) * 0.3;
-			scene.rotation.z = Math.sin(time * 0.0002) * 0.3;
+			scene.rotation.x = Math.sin(time * 0.0002) * 0.1;
+			scene.rotation.y = Math.sin(time * 0.0002) * 0.1;
+			scene.rotation.z = Math.sin(time * 0.0002) * 0.1;
 			renderer.render(scene, camera);
 		}
 	</script>
