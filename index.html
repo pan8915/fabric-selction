@@ -24,13 +24,13 @@
 			/* Location of the box */
 			left: 30%;
 			top: 15%;
-			width: 37vw;
+			width: 35vw;
 			/* Full width */
-			height: 37vw;
+			height: 35vw;
 			/* Full height */
 			overflow: auto;
 			/* Enable scroll if needed */
-			background-color: rgb(0,0,0);
+			background-color: rgb(0,0,0,0);
 			/* Fallback color */
 			background-color: rgba(100,100,100,0.5);;
        background-repeat: no-repeat;
@@ -39,7 +39,7 @@
 		/* The Close Button */
 		.close {
        position: absolute;
-       margin:0 auto;
+       margin:0%,0%,0%,5%;
        padding: 0%;
 			 color: #ffffff;
 			 float: right;
@@ -49,7 +49,7 @@
 		}
 		.close:hover,
 		.close:focus {
-        margin:0 auto;
+      margin:0%,0%,0%,5%;
        position: absolute;
 			 color: black;
 			 text-decoration: none;
@@ -116,8 +116,8 @@
 					mesh.position.x = Math.random() * 900 - 300;
 					mesh.position.y = Math.random() * 900 - 300;
 					mesh.position.z = Math.random() * 900 - 300;
-					mesh.rotation.x = Math.random() * 2 * Math.PI;
-					mesh.rotation.y = Math.random() * 2 * Math.PI;
+					// mesh.rotation.x = Math.random() * 2 * Math.PI;
+					// mesh.rotation.y = Math.random() * 2 * Math.PI;
 					mesh.matrixAutoUpdate = false;
 					mesh.updateMatrix();
 					mesh.name = data.filename[i];
@@ -205,7 +205,7 @@
 							obj = intersection.object;
 							var imgUrl = 'image/' + obj.name;
 							$(".text").empty();
-							$(".popup").append("<img class='fabricImg' width = 99%;><span class='close'>&times;</span>");
+							$(".popup").append("<img class='fabricImg' width = 97%><span class='close'>&times;</span>");
 							$('.fabricImg').attr('src',imgUrl);
 							var textureLoader = new THREE.TextureLoader();
 							$(".popup").show();
