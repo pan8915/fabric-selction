@@ -94,7 +94,6 @@
 
     document.addEventListener('mousemove',onDocumentMouseMove, false);
      $(document).ready(function(){
-
 			init();
   		animate();
      });
@@ -202,7 +201,7 @@
 			}
 
 			function onDocumentTouchStart(event) {
-				event.preventDefault();
+				// event.preventDefault();
 				event.clientX = event.touches[0].clientX;
 				event.clientY = event.touches[0].clientY;
 				onDocumentMouseDown(event);
@@ -211,7 +210,7 @@
 			function onDocumentMouseDown(event) {
 				mouseX = (event.clientX - windowHalfX) * 2;
 				mouseY = (event.clientY - windowHalfY) * 2;
-				event.preventDefault();
+				// event.preventDefault();
 				mouse.x = +(event.clientX / renderer.domElement.clientWidth) * 2 - 1;
 				mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
 				raycaster.setFromCamera(mouse, camera);
