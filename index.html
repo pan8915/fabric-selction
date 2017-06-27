@@ -14,27 +14,31 @@
 			overflow: hidden;
 		}
 
+/* iphone */
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+img { max-width: 95%; }
+}
+
+/* ipad */
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) {
+img { max-width: 95%; }
+}
+
 		.popup {
       margin:0 auto;
 			display: none;
 			position: absolute;
-			/*z-index: 3;*/
-			/* Sit on top */
 			padding: 0 auto;
-			/* Location of the box */
-			left: 30%;
+			left: 25%;
 			top: 15%;
 			width: 40vw;
-			/* Full width */
-			height: 38vw;
-			/* Full height */
+      min-width: 330px; max-width:1000px
+			height: 30vh;
+      min-height: 160px; max-height:600px;
 			overflow: hidden;
-			/* Enable scroll if needed */
 			background-color: rgb(0,0,0,0);
-			/* Fallback color */
 			background-color: rgba(100,100,100,0.5);;
-       background-repeat: no-repeat;
-			/* Black w/ opacity */
+      background-repeat: no-repeat;
 		}
 		/* The Close Button */
 		.close {
@@ -43,7 +47,7 @@
        padding: 0%;
 			 color: #ffffff;
 			 float: right;
-			 font-size: 4vw;
+			 font-size: 400%;
 			 font-weight: bold;
        z-index:3;
 			 transform: translate(-110%, 0);
@@ -63,8 +67,8 @@
       font-weight: 300;
       position: absolute;
       padding: 60% 10% 0% 20%;
-      font-size: 60px;
-      font-size: 3.9vw;
+      font-size: 300px;
+      font-size: 300%;
       color:white;
       text-align: center;
     }
@@ -79,6 +83,7 @@
 	<script src="Projector.js"></script>
 	<script src="CanvasRenderer.js"></script>
 	<script src="tween.min.js"></script>
+  <script src="TrackballControls.js"></script>
 	<script src="Detector.js"></script>
 	<script>
 		var container, stats;
@@ -98,7 +103,19 @@
 			container = document.createElement('div');
 			document.body.appendChild(container);
 			camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
-			camera.position.z = 800;
+			camera.position.z = 1200;
+
+      controls = new THREE.TrackballControls(camera);
+      controls.rotateSpeed = 0.3;
+      controls.zoomSpeed = 2.2;
+      controls.panSpeed = 0.7;
+      controls.noZoom = false;
+      controls.noPan = false;
+      controls.staticMooving = false;
+      controls.dynamicDampingFactor = 0.5;
+      controls.keys = [65,83,68];
+      controls.addEventListener('change',render);
+
 			group = new THREE.Group();
 			scene = new THREE.Scene();
 			scene.fog = new THREE.Fog(0xffffff, 1, 10000);
@@ -106,7 +123,7 @@
 			$.getJSON("texture.json", function(data) {
 				for (var i = 0; i < data.filename.length; i++) {
 					var textureLoader = new THREE.TextureLoader();
-					var geometry = new THREE.BoxGeometry(150, 150, 1);
+					var geometry = new THREE.BoxGeometry(120, 120, 1);
 					var texture = textureLoader.load('image/' + data.filename[i]);
 					var material = new THREE.MeshBasicMaterial({
 						map: texture
