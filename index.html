@@ -18,17 +18,17 @@
       margin:0 auto;
 			display: none;
 			position: absolute;
-			z-index: 1;
+			/*z-index: 3;*/
 			/* Sit on top */
-			padding: 2% 2% 2% 2%;
+			padding: 0 auto;
 			/* Location of the box */
 			left: 30%;
 			top: 15%;
-			width: 35vw;
+			width: 40vw;
 			/* Full width */
-			height: 35vw;
+			height: 38vw;
 			/* Full height */
-			overflow: auto;
+			overflow: hidden;
 			/* Enable scroll if needed */
 			background-color: rgb(0,0,0,0);
 			/* Fallback color */
@@ -39,22 +39,23 @@
 		/* The Close Button */
 		.close {
        position: absolute;
-       margin:0%,0%,0%,5%;
+       margin:0 auto;
        padding: 0%;
 			 color: #ffffff;
 			 float: right;
 			 font-size: 4vw;
 			 font-weight: bold;
-       z-index:1;
+       z-index:3;
+			 transform: translate(-110%, 0);
 		}
 		.close:hover,
 		.close:focus {
-      margin:0%,0%,0%,5%;
+      margin:0 auto;
        position: absolute;
 			 color: black;
 			 text-decoration: none;
 			 cursor: pointer;
-       z-index:1;
+       z-index:3;
 		}
      .fabricText{
       margin:0 auto;
@@ -94,8 +95,8 @@
 			$(".popup").hide();
 			container = document.createElement('div');
 			document.body.appendChild(container);
-			camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 8000);
-			camera.position.z = 500;
+			camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
+			camera.position.z = 800;
 			group = new THREE.Group();
 			scene = new THREE.Scene();
 			scene.fog = new THREE.Fog(0xffffff, 1, 10000);
@@ -103,7 +104,7 @@
 			$.getJSON("texture.json", function(data) {
 				for (var i = 0; i < data.filename.length; i++) {
 					var textureLoader = new THREE.TextureLoader();
-					var geometry = new THREE.BoxGeometry(100, 100, 1);
+					var geometry = new THREE.BoxGeometry(150, 150, 1);
 					var texture = textureLoader.load('image/' + data.filename[i]);
 					var material = new THREE.MeshBasicMaterial({
 						map: texture
@@ -205,7 +206,7 @@
 							obj = intersection.object;
 							var imgUrl = 'image/' + obj.name;
 							$(".text").empty();
-							$(".popup").append("<img class='fabricImg' width = 97%><span class='close'>&times;</span>");
+							$(".popup").append("<img class='fabricImg' width = 100%><span class='close'>&times;</span>");
 							$('.fabricImg').attr('src',imgUrl);
 							var textureLoader = new THREE.TextureLoader();
 							$(".popup").show();
@@ -228,13 +229,13 @@
 
 		function render() {
 			TWEEN.update();
-			camera.position.x += (mouseX - camera.position.x) * .02;
-			camera.position.y += (-mouseY - camera.position.y) * .02;
+			camera.position.x += (mouseX - camera.position.x) * .1;
+			camera.position.y += (-mouseY - camera.position.y) * .1;
 			camera.lookAt(scene.position);
 			var time = Date.now();
-			scene.rotation.x = Math.sin(time * 0.0002) * 0.9;
-			scene.rotation.y = Math.sin(time * 0.0002) * 0.9;
-			scene.rotation.z = Math.sin(time * 0.0002) * 0.9;
+			scene.rotation.x = Math.sin(time * 0.0002) * 1.3;
+			scene.rotation.y = Math.sin(time * 0.0002) * 1.3;
+			scene.rotation.z = Math.sin(time * 0.0002) * 1.3;
 			renderer.render(scene, camera);
 		}
 	</script>
