@@ -25,7 +25,7 @@
       min-width: 300px;
       max-width:1324px;
 			height: 38vh;
-      min-height: 250px;
+      min-height: 290px;
       max-height:1024px;
 			overflow: hidden;
 			background-color: rgb(0,0,0,0);
@@ -70,7 +70,10 @@
 </head>
 <body>
 	<div id="dialog" class="popup"><p class="fabricText">Sontte Fabric</p></div>
-	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+	<script
+  src="https://code.jquery.com/jquery-3.2.1.js"
+  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+  crossorigin="anonymous"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script src="three.min.js"></script>
 	<script src="stats.min.js"></script>
@@ -91,6 +94,7 @@
 
     document.addEventListener('mousemove',onDocumentMouseMove, false);
      $(document).ready(function(){
+
 			init();
   		animate();
      });
@@ -152,7 +156,7 @@
 			// renderer.sortObjects = false;
 			container.appendChild(renderer.domElement);
 			document.addEventListener('mousedown', onDocumentMouseDown, false);
-			document.addEventListener('mousemove', onDocumentMouseMove, false);
+			// document.addEventListener('mousemove', onDocumentMouseMove, false);
 			document.addEventListener('touchstart', onDocumentTouchStart, false);
 			window.addEventListener('resize', onWindowResize, false);
 
@@ -194,6 +198,7 @@
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
 				renderer.setSize(window.innerWidth, window.innerHeight);
+        controls.handleResize();
 			}
 
 			function onDocumentTouchStart(event) {
@@ -204,8 +209,8 @@
 			}
 
 			function onDocumentMouseDown(event) {
-				// mouseX = (event.clientX - windowHalfX) * 2;
-				// mouseY = (event.clientY - windowHalfY) * 2;
+				mouseX = (event.clientX - windowHalfX) * 2;
+				mouseY = (event.clientY - windowHalfY) * 2;
 				event.preventDefault();
 				mouse.x = +(event.clientX / renderer.domElement.clientWidth) * 2 - 1;
 				mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
@@ -240,6 +245,7 @@
 		function animate() {
 			requestAnimationFrame(animate);
 			render();
+      controls.update();
 			//stats.update();
 		}
 
