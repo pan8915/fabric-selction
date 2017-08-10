@@ -11,7 +11,7 @@
 			padding: 0;
 			margin: 0;
 			font-weight: bold;
-			overflow: hidden;
+			overflow: scroll;
 		}
 
 		.popup {
@@ -20,11 +20,11 @@
 			position: absolute;
 			padding: 0 auto;
 			left: 20%;
-			top: 15%;
+			top: 45%;
 			width: 40vw;
       min-width: 300px;
       max-width:1324px;
-			height: 38vh;
+			height: 40vh;
       min-height: 290px;
       max-height:1024px;
 			overflow: hidden;
@@ -69,193 +69,23 @@
 	</style>
 </head>
 <body>
-	<div id="dialog" class="popup"><p class="fabricText">Sontte Fabric</p></div>
+
 	<script
-  src="https://code.jquery.com/jquery-3.2.1.js"
-  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
-  crossorigin="anonymous"></script>
+	src="https://code.jquery.com/jquery-3.2.1.js"
+	integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+	crossorigin="anonymous"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script src="three.min.js"></script>
 	<script src="stats.min.js"></script>
 	<script src="Projector.js"></script>
 	<script src="CanvasRenderer.js"></script>
 	<script src="tween.min.js"></script>
-  <script src="TrackballControls.js"></script>
+	<script src="TrackballControls.js"></script>
 	<script src="Detector.js"></script>
-	<script>
-		var container, stats;
-		var camera, scene, renderer, controls;
-		var geometry, group;
-		var intersection = null;
-		var mouseX = 0, mouseY = 0;
-		var windowHalfX = window.innerWidth / 2;
-		var windowHalfY = window.innerHeight / 2;
-		var light, dirLight, hemiLight, spotLight, cloth, textureLoader, raycaster, mouse;
-
-    document.addEventListener('mousemove',onDocumentMouseMove, false);
-     $(document).ready(function(){
-			init();
-  		animate();
-     });
-
-		function init() {
-			$(".popup").hide();
-			container = document.createElement('div');
-			document.body.appendChild(container);
-			camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 6000);
-			camera.position.z =4000;
-
-      controls = new THREE.TrackballControls(camera);
-      controls.rotateSpeed = 14.3;
-      controls.zoomSpeed = 7.2;
-      controls.panSpeed = 10.7;
-      controls.noZoom = false;
-      controls.noPan = false;
-      controls.staticMooving = 2.2;
-      controls.dynamicDampingFactor = 0.5;
-      controls.keys = [65,83,68];
-      controls.addEventListener('change',render);
-
-			group = new THREE.Group();
-			scene = new THREE.Scene();
-			scene.fog = new THREE.Fog(0xffffff, 1, 10000);
-			//fabric json
-			$.getJSON("texture.json", function(data) {
-				for (var i = 0; i < data.filename.length; i++) {
-					var textureLoader = new THREE.TextureLoader();
-					var geometry = new THREE.BoxGeometry(200, 200, 1);
-					var texture = textureLoader.load('image/' + data.filename[i]);
-					var material = new THREE.MeshBasicMaterial({
-						map: texture
-					});
-					//  var color = new THREE.Color('#ffffff');
-					//  var material = new THREE.MeshPhongMaterial({color:color.getHex(), bumpMap:texture});
-
-					// var faceMaterial = new THREE.MeshFaceMaterial(materials);
-					var mesh = new THREE.Mesh(geometry, material);
-					mesh.position.x = Math.random() * 2000 - 100;
-					mesh.position.y = Math.random() * 2000 - 100;
-					mesh.position.z = Math.random() * 2000 - 100;
-					mesh.rotation.x = Math.random() * 1.03 * Math.PI;
-					mesh.rotation.y = Math.random() * 1.03 * Math.PI;
-					mesh.matrixAutoUpdate = false;
-					mesh.updateMatrix();
-					mesh.name = data.filename[i];
-					group.add(mesh);
-				}
-				scene.add(group);
-			});
-
-			raycaster = new THREE.Raycaster();
-			mouse = new THREE.Vector2();
-			renderer = new THREE.WebGLRenderer();
-			renderer.setClearColor(0xffffff);
-			renderer.setPixelRatio(window.devicePixelRatio);
-			renderer.setSize(window.innerWidth, window.innerHeight);
-			// renderer.sortObjects = false;
-			container.appendChild(renderer.domElement);
-			document.addEventListener('mousedown', onDocumentMouseDown, false);
-			// document.addEventListener('mousemove', onDocumentMouseMove, false);
-			document.addEventListener('touchstart', onDocumentTouchStart, false);
-			window.addEventListener('resize', onWindowResize, false);
-
-			// textureLoader = new THREE.TextureLoader();
-			// var clothWidth = 4;
-			// var clothHeight = 3;
-			// var clothNumSegmentsZ = clothWidth * 5;
-			// var clothNumSegmentsY = clothHeight * 5;
-			// var clothSegmentLengthZ = clothWidth / clothNumSegmentsZ;
-			// var clothSegmentLengthY = clothHeight / clothNumSegmentsY;
-			// var clothPos = new THREE.Vector3(-3, 3, 2);
-			// var clothGeometry = new THREE.PlaneBufferGeometry(clothWidth, clothHeight, clothNumSegmentsZ, clothNumSegmentsY);
-			// clothGeometry.rotateY(Math.PI * 0.5);
-			// clothGeometry.translate(clothPos.x, clothPos.y + clothHeight * 0.5, clothPos.z - clothWidth * 0.5);
-			// var clothMaterial = new THREE.MeshLambertMaterial({
-			// 	color: 0xcccccc,
-			// 	side: THREE.DoubleSide
-			// });
-			// var cloth = new THREE.Mesh(clothGeometry, clothMaterial);
-			// cloth.castShadow = true;
-			// cloth.receiveShadow = true;
-			// scene.add(cloth);
-			// textureLoader.load("image/sontte1.png", function(texture) {
-			// 	texture.wrapS = THREE.RepeatWrapping;
-			// 	texture.wrapT = THREE.RepeatWrapping;
-			// 	texture.repeat.set(clothNumSegmentsZ, clothNumSegmentsY);
-			// 	cloth.material, map = texture;
-			// 	cloth.material.needsUpdate = true;
-			// });
-			light = new THREE.DirectionalLight(0xffffff);
-			scene.add(light);
-
-			function onWindowResize() {
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
-				renderer.setSize(window.innerWidth, window.innerHeight);
-        controls.handleResize();
-			}
-
-			function onDocumentTouchStart(event) {
-				// event.preventDefault();
-				event.clientX = event.touches[0].clientX;
-				event.clientY = event.touches[0].clientY;
-				onDocumentMouseDown(event);
-			}
-
-			function onDocumentMouseDown(event) {
-				mouseX = (event.clientX - windowHalfX);
-				mouseY = (event.clientY - windowHalfY);
-				// event.preventDefault();
-				mouse.x = +(event.clientX / renderer.domElement.clientWidth) * 2 - 1;
-				mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
-				raycaster.setFromCamera(mouse, camera);
-				var intersections = raycaster.intersectObjects(group.children);
-				intersection = (intersections.length) > 0 ? intersections[0] : null;
-				if (intersection) {
-					for (var i = 0; i < intersections.length; i++) {
-						var intersection = intersections[i],
-							obj = intersection.object;
-							var imgUrl = 'image/' + obj.name;
-							$(".text").empty();
-							$(".popup").append("<img class='fabricImg' width = 100%'><span class='close'>&times;</span>");
-							$('.fabricImg').attr('src',imgUrl);
-							var textureLoader = new THREE.TextureLoader();
-							$(".popup").show();
-							//obj.material.color.setRGB(1.0 - i / intersections.length, 0, 0);
-						console.log('I am here');
-						//alert("I am a fabric!"+ 'data.filename[i]');
-					}
-				}
-				$('.close').click(function(){
-					$('.popup').hide()});
-			}
-		}
-
-		function onDocumentMouseMove(event){
- 		 mouseX = (event.clientX - windowHalfX)*2 ;
- 		 mouseY = (event.clientY - windowHalfY)*2 ;
- 	 }
-		//
-		function animate() {
-			requestAnimationFrame(animate);
-			render();
-      controls.update();
-			//stats.update();
-		}
-
-		function render() {
-			TWEEN.update();
-			camera.position.x += (mouseX - camera.position.x);
-			camera.position.y += (-mouseY - camera.position.y);
-			camera.lookAt(scene.position);
-			var time = Date.now();
-			scene.rotation.x = Math.sin(time * 0.001) * 0.1;
-			scene.rotation.y = Math.sin(time * 0.001) * 0.1;
-			scene.rotation.z = Math.sin(time * 0.001) * 0.1;
-			renderer.render(scene, camera);
-		}
-	</script>
-
+	<script src="main.js"></script>
+	<div id="webgl"></div>
+	<div id="dialog" class="popup"><p class="fabricText">Sontte Fabric</p></div>
+<!-- <img src ="pic/website2.png" style="width:20%"/> -->
 </body>
 
 </html>
