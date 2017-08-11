@@ -7,21 +7,66 @@
   var windowHalfX = window.innerWidth / 2;
   var windowHalfY = window.innerHeight / 2;
   var light, dirLight, hemiLight, spotLight, cloth, textureLoader, raycaster, mouse;
+  var colorSelection='rgb(91,103,112)';
 
   document.addEventListener('mousemove',onDocumentMouseMove, false);
    $(document).ready(function(){
+     rendering();
     init();
     animate();
    });
+
+   function setBlack(){
+     colorSelection='rgb(0,0,0)';
+     console.log('black');
+     rendering()
+   }
+
+   function setGrey(){
+     colorSelection='rgb(91,103,112)';
+     console.log('grey');
+     rendering();
+   }
+
+   function rendering(){
+     group = new THREE.Group();
+     scene = new THREE.Scene();
+     scene.background = new THREE.Color(colorSelection);
+     $.getJSON("fabric.json", function(data) {
+       for (var i = 0; i < 98; i++) {
+         console.log(data.filename[i]);
+         var textureLoader = new THREE.TextureLoader();
+         var geometry = new THREE.BoxGeometry(400, 300, 25);
+         var texture = textureLoader.load('image/' + data.filename[i]);
+         var material = new THREE.MeshBasicMaterial({
+           map: texture
+         });
+
+         var mesh = new THREE.Mesh(geometry, material);
+         //mesh.position.x = -Math.random() * 1000;
+         mesh.position.x = (Math.random()-0.5) * 8800;
+         mesh.position.y = (Math.random()-0.5) * 8800;
+         mesh.position.z = (Math.random()-0.5)* 8800;
+
+         mesh.rotation.x = Math.random() * 1.01 * Math.PI;
+         mesh.rotation.y = Math.random() * 1.01 * Math.PI;
+         mesh.matrixAutoUpdate = false;
+         mesh.updateMatrix();
+         mesh.name = data.filename[i];
+         group.add(mesh);
+       }
+       scene.add(group);
+    });
+  }
 
   function init() {
     $(".popup").hide();
     container = document.createElement('div');
     document.body.appendChild(container);
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
-    camera.position.x =1000;
-    camera.position.y =1000;
-    camera.position.z =1000;
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
+    camera.position.x =2000;
+    camera.position.y =2000;
+    camera.position.z =2000;
 
     controls = new THREE.TrackballControls(camera);
     controls.rotateSpeed = 5.3;
@@ -34,44 +79,13 @@
     //controls.keys = [65,83,68];
     controls.addEventListener('change',render);
 
-    group = new THREE.Group();
-    scene = new THREE.Scene();
     // scene.fog = new THREE.Fog(0xffffff, 0.2, 16000);
     //fabric json
-    $.getJSON("fabric.json", function(data) {
-      for (var i = 0; i < 98; i++) {
-        console.log(data.filename[i]);
-        var textureLoader = new THREE.TextureLoader();
-        var geometry = new THREE.BoxGeometry(200, 200, 3);
-        var texture = textureLoader.load('image/' + data.filename[i]);
-        var material = new THREE.MeshBasicMaterial({
-          map: texture
-        });
-
-        //  var color = new THREE.Color('#ffffff');
-        //  var material = new THREE.MeshPhongMaterial({color:color.getHex(), bumpMap:texture});
-
-        // var faceMaterial = new THREE.MeshFaceMaterial(materials);
-        var mesh = new THREE.Mesh(geometry, material);
-        //mesh.position.x = -Math.random() * 1000;
-        mesh.position.x = (Math.random()-0.5) * 3800;
-        mesh.position.y = (Math.random()-0.5) * 3800;
-        mesh.position.z = (Math.random()-0.5)* 3800;
-
-        mesh.rotation.x = Math.random() * 1.01 * Math.PI;
-        mesh.rotation.y = Math.random() * 1.01 * Math.PI;
-        mesh.matrixAutoUpdate = false;
-        mesh.updateMatrix();
-        mesh.name = data.filename[i];
-        group.add(mesh);
-      }
-      scene.add(group);
-    });
 
     raycaster = new THREE.Raycaster();
     mouse = new THREE.Vector2();
     renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor('rgb(91,103,121)');
+    renderer.setClearColor(colorSelection);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     // renderer.sortObjects = false;
