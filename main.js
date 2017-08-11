@@ -28,17 +28,40 @@
      rendering();
    }
 
+   function setWhite() {
+     colorSelection='rgb(255,255,255)';
+     rendering();
+   }
+
    function rendering(){
      group = new THREE.Group();
      scene = new THREE.Scene();
      scene.background = new THREE.Color(colorSelection);
+     //lights
+     hemiLight = new THREE.HemisphereLight(0xffffff,0xffffff,0.6);
+     hemiLight.color.setHSL(0.1,0.8,1);
+     hemiLight.position.set(0,10000,0);
+     scene.add(hemiLight);
+
+     dirLight = new THREE.DirectionalLight( 0xffffff, 0.7 );
+        dirLight.color.setHSL( 0, 1, 1 );
+        dirLight.position.set( 0, 0.55, 1 );
+        dirLight.position.multiplyScalar( 50 );
+        scene.add( dirLight );
+        dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = 2048;
+        dirLight.shadow.mapSize.height = 2048;
+
      $.getJSON("fabric.json", function(data) {
-       for (var i = 0; i < 98; i++) {
+       for (var i = 0; i < data.filename.length; i++) {
          console.log(data.filename[i]);
          var textureLoader = new THREE.TextureLoader();
-         var geometry = new THREE.BoxGeometry(400, 300, 25);
+         var geometry = new THREE.BoxGeometry(400, 300, 5);
          var texture = textureLoader.load('image/' + data.filename[i]);
-         var material = new THREE.MeshBasicMaterial({
+         texture.wrapS =THREE.RepeatWrapping;
+         texture.wrapT = THREE.RepeatWrapping;
+
+         var material = new THREE.MeshPhongMaterial({
            map: texture
          });
 
@@ -63,13 +86,13 @@
     $(".popup").hide();
     container = document.createElement('div');
     document.body.appendChild(container);
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 20000);
     camera.position.x =2000;
     camera.position.y =2000;
     camera.position.z =2000;
 
     controls = new THREE.TrackballControls(camera);
-    controls.rotateSpeed = 5.3;
+    controls.rotateSpeed = 9.3;
     controls.zoomSpeed = 2.2;
     controls.panSpeed = 5.7;
     controls.noZoom = false;
@@ -94,12 +117,6 @@
     // document.addEventListener('mousemove', onDocumentMouseMove, false);
     document.addEventListener('touchstart', onDocumentTouchStart, false);
     window.addEventListener('resize', onWindowResize, false);
-
-    //lights
-    var light = new THREE.AmbientLight(0xffffff,0.5);
-    scene.add(light);
-    var light2 = new THREE.PointLight(0xffffff,0.5);
-    scene.add(light2);
 
     function onWindowResize() {
       camera.aspect = window.innerWidth / window.innerHeight;
@@ -154,14 +171,6 @@
     render();
     controls.update();
     //stats.update();
-  }
-
-  function getSpotLight(intensity, color){
-    color = color === undefined ?'rgb(255,255,255)' :color;
-    var light = new THREE.SpotLight(color, intensity);
-    light.castshadow = true;
-    light.penumbra = 0.5;
-    return light;
   }
 
   function render() {
