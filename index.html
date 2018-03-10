@@ -2,92 +2,106 @@
 <html lang="en">
 
 <head>
-	<title>three.js webgl - geometry hierarchy</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-	<style>
-		body {
-			background: #fff;
-			padding: 0;
-			margin: 0;
-			font-weight: bold;
-			overflow: scroll;
-		}
+    <title>three.js webgl - geometry hierarchy</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
-		.popup {
-      margin:0 auto;
-			display: none;
-			position: absolute;
-			padding: 0 auto;
-			left: 20%;
-			top: 45%;
-			width: 40vw;
-      min-width: 300px;
-      max-width:1324px;
-			height: 40vh;
-      min-height: 290px;
-      max-height:1024px;
-			overflow: hidden;
-			background-color: rgb(0,0,0,0);
-			background-color: rgba(100,100,100,0.5);;
-      background-repeat: no-repeat;
-		}
-		/* The Close Button */
-		.close {
-       position: absolute;
-       margin:0 auto;
-       padding: 0%;
-			 color: #ffffff;
-			 float: right;
-			 font-size: 400%;
-			 font-weight: bold;
-       z-index:3;
-			 transform: translate(-110%, 0);
-       background-repeat: no-repeat;
-       overflow: hidden;
-		}
-		.close:hover,
-		.close:focus {
-      margin:0 auto;
-       position: absolute;
-			 color: black;
-			 text-decoration: none;
-			 cursor: pointer;
-       z-index:3;
-		}
-     .fabricText{
-      font-family: "acumin-pro-semi-condensed", "acumin-pro", sans-serif;
-      margin:0 auto;
-      font-weight: 300;
-      position: absolute;
-      padding: 40% 10% 0% 20%;
-      font-size: 300px;
-      font-size: 300%;
-      color:white;
-      text-align: center;
-    }
-	</style>
+    <style>
+        body {
+            background: #fff;
+            padding: 0;
+            margin: 0;
+            font-weight: bold;
+            overflow: scroll;
+        }
+
+        .popup {
+            margin: 0 auto;
+            display: none;
+            position: absolute;
+            padding: 0 auto;
+            left: 20%;
+            top: 45%;
+            width: 40vw;
+            min-width: 300px;
+            max-width: 1324px;
+            height: 40vh;
+            min-height: 290px;
+            max-height: 1024px;
+            overflow: hidden;
+            background-color: rgb(255, 255, 255);
+            /*background-color: rgba(100,100,100,0.5);;*/
+            background-repeat: no-repeat;
+        }
+
+        /* The Close Button */
+
+        .close {
+            position: absolute;
+            margin: 0 39% 0 39% auto;
+            padding: 0%;
+            color: #465062;
+            float: right;
+            font-size: 400%;
+            font-weight: lighter;
+            z-index: 99;
+            transform: translate(-110%, 0);
+            background-repeat: no-repeat;
+            overflow: hidden;
+        }
+
+        .close:hover,
+        .close:focus {
+            margin: 0 39% 0 39% auto;
+            position: absolute;
+            color: #F08200;
+            text-decoration: none;
+            cursor: pointer;
+            z-index: 99;
+        }
+
+        .fabricImg {
+            width: 100%;
+            height: 100%;
+
+        }
+
+        .fabricText {
+            font-family: "acumin-pro-semi-condensed", "acumin-pro", sans-serif;
+            margin: 0 auto;
+            font-weight: 300;
+            position: absolute;
+            padding: 19% 3% 10% 60%;
+
+            font-size: 200%;
+            color: #465062;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
+<script
+        src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"></script>
+<script
+        src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+        integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+        crossorigin="anonymous"></script>
+<script src="three.min.js"></script>
+<script src="stats.min.js"></script>
+<script src="Projector.js"></script>
+<script src="CanvasRenderer.js"></script>
+<script src="tween.min.js"></script>
+<script src="TrackballControls.js"></script>
+<script src="Detector.js"></script>
+<script src="main.js"></script>
+<div id="webgl"></div>
+<div id="dialog" class="popup"><p class="fabricText">Sonnette Fabric</p></div>
+<button type="button" onclick="setBlack()" class="button">Black</button>
+<button type="button" onclick="setGrey()" class="button">Grey</button>
+<button type="button" onclick="setWhite()" class="button">White</button>
 
-	<script
-	src="https://code.jquery.com/jquery-3.2.1.js"
-	integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
-	crossorigin="anonymous"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-	<script src="three.min.js"></script>
-	<script src="stats.min.js"></script>
-	<script src="Projector.js"></script>
-	<script src="CanvasRenderer.js"></script>
-	<script src="tween.min.js"></script>
-	<script src="TrackballControls.js"></script>
-	<script src="Detector.js"></script>
-	<script src="main.js"></script>
-	<div id="webgl"></div>
-	<div id="dialog" class="popup"><p class="fabricText">Sontte Fabric</p></div>
-	<button type="button" onclick="setBlack()" class="button">Black</button>
-	<button type="button" onclick="setGrey()" class="button">Grey</button>
-	<button type="button" onclick="setWhite()" class="button">White</button>
 
 <!-- <img src ="pic/website2.png" style="width:20%"/> -->
 </body>
